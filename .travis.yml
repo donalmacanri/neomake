@@ -13,16 +13,18 @@ branches:
 env:
   matrix:
     - ENV=vimlint
-    - ENV=testnvim
-    - ENV=docker_test MAKE_ARGS=DOCKER_VIM=vim73
-    - ENV=docker_test MAKE_ARGS=DOCKER_VIM=vim74-trusty
-    - ENV=docker_test MAKE_ARGS=DOCKER_VIM=vim74-xenial
-    - ENV=docker_test MAKE_ARGS=DOCKER_VIM=vim8069
+    - ENV=docker_test MAKE_ARGS=DOCKER_VIM=nvim-v0.1.7
+    - ENV=docker_test MAKE_ARGS=DOCKER_VIM=nvim-master
     - ENV=docker_test MAKE_ARGS=DOCKER_VIM=vim-master
+    - ENV=docker_test MAKE_ARGS=DOCKER_VIM=vim8069
+    - ENV=docker_test MAKE_ARGS=DOCKER_VIM=vim74-xenial
+    - ENV=docker_test MAKE_ARGS=DOCKER_VIM=vim74-trusty
+    - ENV=docker_test MAKE_ARGS=DOCKER_VIM=vim73
+    - ENV=testnvim
+    - ENV=testvim
     - ENV=check
     - ENV=vint-diff
     - ENV=vint-errors
-    - ENV=testvim
     - ENV=vint
     - ENV=docker_vimhelplint
 

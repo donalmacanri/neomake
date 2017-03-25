@@ -136,7 +136,7 @@ docker_push:
 	docker push $(DOCKER_IMAGE)
 
 # docker run --rm $(DOCKER_IMAGE) sh -c 'cd /vim-build/bin && ls vim*'
-DOCKER_VIMS:=vim73 vim74-trusty vim74-xenial vim8069 vim-master
+DOCKER_VIMS:=vim73 vim74-trusty vim74-xenial vim8069 vim-master nvim-0.1.7 nvim-master
 _DOCKER_VIM_TARGETS:=$(addprefix docker_test-,$(DOCKER_VIMS))
 
 docker_test_all: $(_DOCKER_VIM_TARGETS)
@@ -146,7 +146,7 @@ $(_DOCKER_VIM_TARGETS):
 
 docker_test: DOCKER_VIM:=vim-master
 docker_test: DOCKER_STREAMS:=-a stderr
-docker_test: DOCKER_MAKE_TARGET:=testvim TEST_VIM=/vim-build/bin/$(DOCKER_VIM) VIM_ARGS="$(VIM_ARGS)"
+docker_test: DOCKER_MAKE_TARGET:=TEST_VIM='/vim-build/bin/$(DOCKER_VIM)$(if $findstring(neovim,$(DOCKERVIM)), --headless,)' VIM_ARGS="$(VIM_ARGS)"
 docker_test: docker_make
 
 docker_run: $(TESTS_VADER_DIR)
