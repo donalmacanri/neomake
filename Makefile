@@ -1,11 +1,12 @@
 # Do not let mess "cd" with user-defined paths.
 CDPATH:=
-
-test:
-	$(MAKE) testnvim
-	$(MAKE) testvim
-
 SHELL:=/bin/bash -o pipefail
+
+
+IS_NEOVIM=$(findstring nvim,$(TEST_VIM))$(findstring neovim,$(TEST_VIM))
+# $(error $(IS_NEOVIM))
+# Run testnvim and testvim by default, and only one if TEST_VIM is given.
+test: $(if $(TEST_VIM),$(if $(IS_NEOVIM),testnvim,testvim),testnvim testvim)
 
 VADER:=Vader!
 VADER_OPTIONS?=
@@ -38,11 +39,13 @@ testnvim: TEST_VIM:=nvim --headless
 testnvim: build/neovim-test-home
 testnvim: TEST_VIM_PREFIX+=HOME=build/neovim-test-home
 testnvim: TEST_VIM_PREFIX+=VADER_OUTPUT_FILE=/dev/stderr
-testnvim: _run_vim
+testnvim:
+	$(call func-run-vim)
 	
 testvim: TEST_VIM:=vim -X
 testvim: TEST_VIM_PREFIX+=HOME=/dev/null
-testvim: _run_vim
+testvim:
+	$(call func-run-vim)
 
 # Add coloring to Vader's output:
 # 1. failures (includes pending) in red "(X)"
@@ -54,14 +57,17 @@ _SED_HIGHLIGHT_ERRORS:=| contrib/highlight-log vader
 # Redirect to stderr again for Docker (where only stderr is used from).
 _REDIR_STDOUT:=2>&1 </dev/null >/dev/null $(_SED_HIGHLIGHT_ERRORS) >&2
 _run_vim: | build $(TESTS_VADER_DIR)
-_run_vim:
+
+define func-run-vim
 	@echo $(TEST_VIM_PREFIX) $(TEST_VIM) -u $(TEST_VIMRC) -i NONE $(VIM_ARGS)
 	@$(TEST_VIM_PREFIX) $(TEST_VIM) -u $(TEST_VIMRC) -i NONE $(VIM_ARGS) $(_REDIR_STDOUT)
+endef
 
 # Interactive tests, keep Vader open.
 _run_interactive: VADER:=Vader
 _run_interactive: _REDIR_STDOUT:=
-_run_interactive: _run_vim
+_run_interactive:
+	$(call func-run-vim)
 
 testvim_interactive: TEST_VIM:=vim -X
 testvim_interactive: TEST_VIM_PREFIX+=HOME=/dev/null
@@ -126,10 +132,11 @@ vimhelplint: | build/vimhelplint
 	contrib/vimhelplint doc/neomake.txt
 
 # Run tests in dockerized Vims.
-DOCKER_IMAGE:=neomake/vims-for-tests:1@sha256:1f24527dfe3eb8688c6afde514ec86ffeb1189211d4f0d09b5ee42799cb78737
+DOCKER_IMAGE:=neomake/vims-for-tests:2
+DOCKER_IMAGE_DIGEST:=@sha256:8678098c88f72f226f13d9147922b1612bab73c843d45d710a45bd9bc54bdc45
 DOCKER_STREAMS:=-ti
 DOCKER=docker run $(DOCKER_STREAMS) --rm \
-       -v $(PWD):/testplugin -v $(abspath $(TESTS_VADER_DIR)):/home/plugins/vader $(DOCKER_IMAGE)
+       -v $(PWD):/testplugin -v $(abspath $(TESTS_VADER_DIR)):/home/plugins/vader $(DOCKER_IMAGE)@$(DOCKER_IMAGE_DIGEST)
 docker_image:
 	docker build -f Dockerfile.tests -t $(DOCKER_IMAGE) .
 docker_push:
@@ -146,7 +153,7 @@ $(_DOCKER_VIM_TARGETS):
 
 docker_test: DOCKER_VIM:=vim-master
 docker_test: DOCKER_STREAMS:=-a stderr
-docker_test: DOCKER_MAKE_TARGET:=TEST_VIM='/vim-build/bin/$(DOCKER_VIM)$(if $findstring(neovim,$(DOCKERVIM)), --headless,)' VIM_ARGS="$(VIM_ARGS)"
+docker_test: DOCKER_MAKE_TARGET:=TEST_VIM='/vim-build/bin/$(DOCKER_VIM)' VIM_ARGS="$(VIM_ARGS)"
 docker_test: docker_make
 
 docker_run: $(TESTS_VADER_DIR)
