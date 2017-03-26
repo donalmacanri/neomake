@@ -20,3 +20,5 @@ RUN install_vim \
 # Git master in a separate layer, since the above is meant to be stable.
 RUN install_vim -tag master -name vim-master -py3 -build \
         -vim nvim -tag master -name nvim-master -py2 -py3 -build
+
+RUN apk --no-cache add bash
