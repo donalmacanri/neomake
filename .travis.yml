@@ -13,8 +13,8 @@ branches:
 env:
   matrix:
     - ENV=vimlint
-    - ENV=docker_test MAKE_ARGS=DOCKER_VIM=nvim-v0.1.7
     - ENV=docker_test MAKE_ARGS=DOCKER_VIM=nvim-master
+    - ENV=docker_test MAKE_ARGS=DOCKER_VIM=nvim-0.1.7
     - ENV=docker_test MAKE_ARGS=DOCKER_VIM=vim-master
     - ENV=docker_test MAKE_ARGS=DOCKER_VIM=vim8069
     - ENV=docker_test MAKE_ARGS=DOCKER_VIM=vim74-xenial
