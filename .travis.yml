@@ -11,6 +11,7 @@ branches:
     - master
 
 env:
+  DOCKER_IMAGE_DIGEST: :2@sha256:2964cd4591ecb4aed2e316040efbd3b57ba9bcd71f33b585a8e48867b82a4324
   matrix:
     - ENV=vimlint
     - ENV=docker_test MAKE_ARGS=DOCKER_VIM=nvim-master
