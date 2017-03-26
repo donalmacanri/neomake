@@ -133,7 +133,7 @@ vimhelplint: | build/vimhelplint
 
 # Run tests in dockerized Vims.
 DOCKER_IMAGE:=neomake/vims-for-tests:2
-DOCKER_IMAGE_DIGEST:=@sha256:8678098c88f72f226f13d9147922b1612bab73c843d45d710a45bd9bc54bdc45
+DOCKER_IMAGE_DIGEST:=sha256:8678098c88f72f226f13d9147922b1612bab73c843d45d710a45bd9bc54bdc45
 DOCKER_STREAMS:=-ti
 DOCKER=docker run $(DOCKER_STREAMS) --rm \
        -v $(PWD):/testplugin -v $(abspath $(TESTS_VADER_DIR)):/home/plugins/vader $(DOCKER_IMAGE)@$(DOCKER_IMAGE_DIGEST)
